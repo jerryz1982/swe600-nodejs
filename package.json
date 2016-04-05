@@ -21,6 +21,7 @@
     "googleapis": "~4.0.0",
     "body-parser": "~1.15.0",
     "express-session": "~1.13.0",
+    "mongoose": "^4.0.3",
     "passport": "~0.3.2",
     "passport-google-oauth2": "~0.1.6",
     "youtube-api": "~1.4.0",
