@@ -5,17 +5,6 @@
      <p>You are not logged in.</p>
 {% else %}
      <p>You are logged in. Welcome, {{ user.name }}!</p>
-     <form action="get_userdata" method="get">
-           <select name="by">
-           <option value="email">Email</option>
-           <option value="last_name">Last Name</option>
-           <option value="first_name">First Name</option>
-           <option value="major">Major</option>
-           <option value="gender">Gender</option>
-           </select>
-        <input type="text" name="string">
-        <input type="submit" value="Search">
-     </form>
      <table class="w3-table-all" style="width:100%">
      <tr>
 	<th>Email</th>
@@ -32,5 +21,10 @@
          Select a file: <input type="text" name="path">
          <input type="submit" value="Submit" action="/">
      </form>
+     {% for video in videos %}
+        <iframe width="420" height="315"
+          src="http://www.youtube.com/embed/{{ video['videoid'] }}?autoplay=0">
+        </iframe>
+     {% endfor %}     
 {% endif %}
 {% endblock %}

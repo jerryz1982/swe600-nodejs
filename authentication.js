@@ -3,8 +3,9 @@ var GoogleStrategy = require('passport-google-oauth2').Strategy;
 var Google = require("googleapis");
 var OAuth2 = Google.auth.OAuth2;
 var User = require('./user.js');
-var youtube = require('youtube-api')
-var ReadJson = require("r-json")
+var Video = require('./video.js');
+var youtube = require('youtube-api');
+var ReadJson = require("r-json");
 const CREDENTIALS = ReadJson("./client_secret.json");
 
 
@@ -14,10 +15,60 @@ passport.use(new GoogleStrategy({
 //    callbackURL: config.google.returnURL,
     clientID: CREDENTIALS.web.client_id,
     clientSecret: CREDENTIALS.web.client_secret,
-    callbackURL: CREDENTIALS.web.redirect_uris[0],
+    callbackURL: CREDENTIALS.web.redirect_uris[1],
     passReqToCallback   : true
   },
   function(request, accessToken, refreshToken, profile, done) {
+    var oauth = youtube.authenticate({
+    type: "oauth",
+    client_id: CREDENTIALS.web.client_id,
+    client_secret: CREDENTIALS.web.client_secret,
+    redirect_url: CREDENTIALS.web.redirect_uris[1]
+    });
+    oauth.setCredentials({'access_token': accessToken});
+    youtube.channels.list(
+        {"part": "contentDetails",
+         "mine": true
+        }, function(err, channel_data) {
+            if(err) {
+            console.log('channel list err' + err)} else {
+            playlist=channel_data.items[0].contentDetails.relatedPlaylists.uploads
+            youtube.playlistItems.list({
+                "playlistId": playlist,
+                "part": "snippet"
+            }, function(err, playlist_data) {
+                if(err) {
+                console.log('playlist err ' + err )} else {
+                    playlist_data.items.forEach(function(item) {
+                        Video.findOne({ videoid: item.snippet.resourceId.videoId},
+                          function (err, video){
+                          if(err) {console.log(err)}
+                          if (!err && video !==null) {
+                              video.title = item.snippet.title
+                              video.description = item.snippet.description
+                              video.googleID = profile.id
+                          } else {
+                              video = new Video({
+                                  googleID: profile.id,
+                                  title: item.snippet.title,
+                                  description: item.snippet.description,
+                                  videoid: item.snippet.resourceId.videoId
+                              })
+                          }
+                          video.save(function(err) {
+                            if(err) {
+                              console.log('error saving video ' + err)
+                            } else {
+                              console.log('saving video: ' + video.videoid)
+                            }
+                          })
+                          });
+                    }) 
+                }
+            })
+            }
+        }
+    );
     User.findOne({ googleID: profile.id }, function (err, user) {
       if(err) {
         console.log(err);  // handle errors!

@@ -5,6 +5,7 @@ var express = require('express');
 var session = require('express-session');
 var path = require('path');
 var User = require('./user.js');
+var Video = require('./video.js');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var fbAuth = require('./authentication.js');
@@ -94,11 +95,19 @@ app.get('/', function(req, res){
             res.render('404')
            }
           else {
+            Video.find({'googleID': user.googleID},
+              function(err, videos) {
+                if(err) {console.log(err)} else {
+                console.log('videos: ' + videos)
+                }
             //console.log(ctx)
             res.render('index', {
                 user: user,
-                req: req
-            }); }});} else {
+                req: req,
+                videos: videos
+            }); })
+      }});}
+      else {
             res.render('index', {
                 user: {},
                 req: req
@@ -125,7 +134,7 @@ app.post('/upload_video', ensureAuthenticated, function(req, res){
                 },
             // I don't want to spam my subscribers
             status: {
-                privacyStatus: "private"
+                privacyStatus: "public"
             }
             },
             // This is for the callback function
@@ -142,9 +151,10 @@ app.post('/upload_video', ensureAuthenticated, function(req, res){
             //res.render('upload_error');
         } else {
             console.log(data)
-            res.render('result', {
-                data: data
-            })
+            res.redirect('/')
+            //res.render('result', {
+            //    data: data
+            //})
             //res.render('index', {
             //    data: data
             }
@@ -173,7 +183,8 @@ app.get('/auth/google',
   passport.authenticate('google', { scope: [
     'https://www.googleapis.com/auth/plus.login',
     'https://www.googleapis.com/auth/plus.profile.emails.read',
-    'https://www.googleapis.com/auth/youtube.upload'
+    'https://www.googleapis.com/auth/youtube.upload',
+    'https://www.googleapis.com/auth/youtube'
   ] }
 ));
 app.get('/auth/google/callback',
