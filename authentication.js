@@ -15,7 +15,7 @@ passport.use(new GoogleStrategy({
 //    callbackURL: config.google.returnURL,
     clientID: CREDENTIALS.web.client_id,
     clientSecret: CREDENTIALS.web.client_secret,
-    callbackURL: CREDENTIALS.web.redirect_uris[1],
+    callbackURL: CREDENTIALS.web.redirect_uris[0],
     passReqToCallback   : true
   },
   function(request, accessToken, refreshToken, profile, done) {
@@ -23,7 +23,7 @@ passport.use(new GoogleStrategy({
     type: "oauth",
     client_id: CREDENTIALS.web.client_id,
     client_secret: CREDENTIALS.web.client_secret,
-    redirect_url: CREDENTIALS.web.redirect_uris[1]
+    redirect_url: CREDENTIALS.web.redirect_uris[0]
     });
     oauth.setCredentials({'access_token': accessToken});
     youtube.channels.list(
