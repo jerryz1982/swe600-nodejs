@@ -1,0 +1,30 @@
+{
+  "name": "swe600-nodejs",
+  "version": "0.0.0",
+  "description": "final project for recording and upload videos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodejs app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jerryz1982/swe600-nodejs"
+  },
+  "author": "Jerry Zhao",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/jerryz1982/swe600-nodejs/issues"
+  },
+  "dependencies": {
+    "express": "~4.13.4",
+    "googleapis": "~4.0.0",
+    "body-parser": "~1.15.0",
+    "express-session": "~1.13.0",
+    "passport": "~0.3.2",
+    "passport-google-oauth2": "~0.1.6",
+    "youtube-api": "~1.4.0",
+    "r-json": "~1.2.1",
+    "swig": "~1.4.2"
+  }
+}

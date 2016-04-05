@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %} - Home{% endblock %}
+{% block content %}
+{% if not req.isAuthenticated() %}
+     <p>You are not logged in.</p>
+{% else %}
+     <p>You are logged in. Welcome, {{ user.name }}!</p>
+     <form action="get_userdata" method="get">
+           <select name="by">
+           <option value="email">Email</option>
+           <option value="last_name">Last Name</option>
+           <option value="first_name">First Name</option>
+           <option value="major">Major</option>
+           <option value="gender">Gender</option>
+           </select>
+        <input type="text" name="string">
+        <input type="submit" value="Search">
+     </form>
+     <table class="w3-table-all" style="width:100%">
+     <tr>
+	<th>Email</th>
+	<th>Name</th>
+     </tr>
+     <tr>
+     	<td>{{ user.email }}</td>
+	<td>{{ user.name }}</td>
+     </tr>
+     </table>
+     <form enctype='application/json' action="upload_video" method="post">
+         Title: <input type="text" name="title">
+         Description: <input type="text" name="desc">
+         Select a file: <input type="text" name="path">
+         <input type="submit" value="Submit" action="/">
+     </form>
+{% endif %}
+{% endblock %}
