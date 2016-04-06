@@ -108,7 +108,7 @@ app.post('/upload_video', ensureAuthenticated, function(req, res){
                 },
             // I don't want to spam my subscribers
             status: {
-                privacyStatus: "public"
+                privacyStatus: "private"
             }
             },
             // This is for the callback function
