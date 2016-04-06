@@ -122,7 +122,7 @@ app.post('/upload_video', ensureAuthenticated, function(req, res){
         if(err) {
             console.log('upload error');
             console.log(err);
-            //res.render('upload_error');
+            res.send('upload_error, please make sure you have a youtube channel. error detail: ' + err);
         } else {
             console.log(data)
             newupload = new Video({
