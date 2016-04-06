@@ -15,10 +15,10 @@
 	<td>{{ user.name }}</td>
      </tr>
      </table>
-     <form enctype='application/json' action="upload_video" method="post">
+     <form enctype='multipart/form-data' action="upload_video" method="post">
          Title: <input type="text" name="title">
          Description: <input type="text" name="desc">
-         Select a file: <input type="text" name="path">
+         Select a file: <input type="file" name="file">
          <input type="submit" value="Submit" action="/">
      </form>
      {% for video in videos %}

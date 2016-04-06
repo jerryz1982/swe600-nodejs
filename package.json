@@ -17,15 +17,16 @@
     "url": "https://github.com/jerryz1982/swe600-nodejs/issues"
   },
   "dependencies": {
-    "express": "~4.13.4",
-    "googleapis": "~4.0.0",
     "body-parser": "~1.15.0",
+    "express": "~4.13.4",
     "express-session": "~1.13.0",
+    "googleapis": "~4.0.0",
     "mongoose": "^4.0.3",
+    "multer": "^1.1.0",
     "passport": "~0.3.2",
     "passport-google-oauth2": "~0.1.6",
-    "youtube-api": "~1.4.0",
     "r-json": "~1.2.1",
-    "swig": "~1.4.2"
+    "swig": "~1.4.2",
+    "youtube-api": "~1.4.0"
   }
 }

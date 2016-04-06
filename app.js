@@ -1,6 +1,5 @@
 // dependencies
 var fs = require('fs');
-var bodyParser = require('body-parser');
 var express = require('express');
 var session = require('express-session');
 var path = require('path');
@@ -8,18 +7,15 @@ var User = require('./user.js');
 var Video = require('./video.js');
 var mongoose = require('mongoose');
 var passport = require('passport');
-var fbAuth = require('./authentication.js');
-//var TwitterStrategy = require('passport-twitter').Strategy;
-//var GithubStrategy = require('passport-github2').Strategy;
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
-//var LinkedinStrategy = require("passport-linkedin").Strategy;
-//var InstagramStrategy = require('passport-instagram').Strategy;
-
+var googleAuth = require('./authentication.js');
 var swig = require('swig');
 var youtube = require("youtube-api");
-var Fs = require("fs")
 var Google = require("googleapis");
 var GoogleYoutube = Google.youtube("v3");
+
+var multer  = require('multer')
+
 // connect to the database
 mongoose.connect('mongodb://swe600:swe600@ds015770.mlab.com:15770/swe600_video');
 
@@ -42,7 +38,8 @@ var app = express();
   app.use(passport.session());
   //app.use(app.router);
   app.use(express.static(__dirname + '/public'));
-  app.use(bodyParser());
+  //app.use(busboy());
+  app.use(multer().single('file'))
 //});
 
 // serialize and deserialize
@@ -59,32 +56,7 @@ passport.deserializeUser(function(id, done) {
     });
 });
 
-var domain = require('domain');
-var rid = 1;
-// Centralized context object
-function Context() {
-    this.reqId = rid;
-    rid += 1;
-}
-Context.getCurrent = function() {
-    return process.domain.context;
-}
 
-app.use(function(req, res, next) {
-    // create a domain for every request
-    var d = domain.create();
-    d.context = new Context();
-    // req and res are created before the d domain is created,
-    // so we have to add them to the domain manually.
-    // newly created EventEmitter or other async constructs are
-    // automatically added to the current domain.
-    d.add(req);
-    d.add(res);
-    // run next in the created domain
-    d.run(function() {
-        next();
-    })
-});
 
 // routes
 app.get('/', function(req, res){
@@ -115,9 +87,8 @@ app.get('/', function(req, res){
       }
       }
       );
-
+var result = [];
 app.post('/upload_video', ensureAuthenticated, function(req, res){
-    console.log(req.body)
     var oauth = youtube.authenticate({
     type: "oauth",
     client_id: CREDENTIALS.web.client_id,
@@ -125,6 +96,9 @@ app.post('/upload_video', ensureAuthenticated, function(req, res){
     redirect_url: CREDENTIALS.web.redirect_uris[0]
     });
     oauth.setCredentials({'access_token': req.user.accesstoken});
+    console.log(req.body)
+    console.log(req.file.originalname)
+
     youtube.videos.insert({
         resource: {
             // Video title and description
@@ -142,7 +116,7 @@ app.post('/upload_video', ensureAuthenticated, function(req, res){
 
             // Create the readable stream to upload the video
         media: {
-            body: Fs.createReadStream(req.body["path"])
+            body: req.file.buffer
         }
     }, function (err, data) {
         if(err) {
@@ -151,33 +125,19 @@ app.post('/upload_video', ensureAuthenticated, function(req, res){
             //res.render('upload_error');
         } else {
             console.log(data)
+            newupload = new Video({
+                googleID: req.user.googleID,
+                title: data['snippet']['title'],
+                description: data['snippet']['description'],
+                videoid: data['id']                
+            })
+            newupload.save()
             res.redirect('/')
-            //res.render('result', {
-            //    data: data
-            //})
-            //res.render('index', {
-            //    data: data
             }
         }
      );
 
 });
-
-//app.get('/display', routes.display);
-app.get('/account', ensureAuthenticated, function(req, res){
-  User.findById(req.session.passport.user, function(err, user) {
-    if(err) {
-      console.log(err);  // handle errors
-    } else {
-      //res.render('account', { user: user});
-        swig.renderFile('views/index.html', {
-            req: req,
-            user: user
-    });
-    }
-  });
-});
-
 
 app.get('/auth/google',
   passport.authenticate('google', { scope: [

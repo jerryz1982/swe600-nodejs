@@ -5,7 +5,8 @@ var User = mongoose.model('User', {
   googleID: Number,
   name: String,
   created: Date,
-  email: String
+  email: String,
+  accesstoken: String
 });
 
 

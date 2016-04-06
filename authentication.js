@@ -10,9 +10,6 @@ const CREDENTIALS = ReadJson("./client_secret.json");
 
 
 passport.use(new GoogleStrategy({
-//    clientID:  config.google.clientID,
-//    clientSecret: config.google.clientSecret,
-//    callbackURL: config.google.returnURL,
     clientID: CREDENTIALS.web.client_id,
     clientSecret: CREDENTIALS.web.client_secret,
     callbackURL: CREDENTIALS.web.redirect_uris[0],
@@ -39,7 +36,31 @@ passport.use(new GoogleStrategy({
             }, function(err, playlist_data) {
                 if(err) {
                 console.log('playlist err ' + err )} else {
-                    playlist_data.items.forEach(function(item) {
+                user_videos = []
+                JSON.stringify(playlist_data);
+                playlist_data.items.forEach(function(item){
+                    user_videos.push(item.snippet.resourceId.videoId)
+                })
+                console.log('upstream user videos: ' + user_videos)
+                Video.find({'googleID': profile.id},
+                  function(err, videos) {
+                  if(err) {console.log('table not found')}
+                  else {
+                      videos_indb = videos
+                      JSON.stringify(videos_indb)
+                      console.log('videos found in db: ' + videos_indb)
+                      if(videos.length>0){
+                      to_delete = videos.filter(function(item) {
+                          return user_videos.indexOf(item['videoid']) < 0
+                      }
+                      )
+                      console.log('videos to remove from db' + to_delete)
+                      to_delete.forEach(function(item) {
+                          item.remove()
+                      });
+                      }
+                  }});
+                  playlist_data.items.forEach(function(item) {
                         Video.findOne({ videoid: item.snippet.resourceId.videoId},
                           function (err, video){
                           if(err) {console.log(err)}
@@ -99,38 +120,3 @@ passport.use(new GoogleStrategy({
     });
   }
 ));
-
-/*
-passport.use(new GoogleStrategy({
-  clientID: config.google.clientID,
-  clientSecret: config.google.clientSecret,
-  consumerKey: config.google.clientID,
-  consumerSecret: config.google.clientSecret,
-  returnURL: config.google.returnURL
-  },
-  function(request, accessToken, refreshToken, profile, done) {
-    User.findOne({ oauthID: profile.id }, function(err, user) {
-      if(err) {
-        console.log(err);  // handle errors!
-      }
-      if (!err && user !== null) {
-        done(null, user);
-      } else {
-        user = new User({
-          oauthID: profile.id,
-          name: profile.displayName,
-          created: Date.now()
-        });
-        user.save(function(err) {
-          if(err) {
-            console.log(err);  // handle errors!
-          } else {
-            console.log("saving user ...");
-            done(null, user);
-          }
-        });
-      }
-    });
-  }
-));
-*/
