@@ -15,22 +15,21 @@
 	<td>{{ user.name }}</td>
      </tr>
      </table>
-     <form enctype='multipart/form-data' action="upload_video" method="post">
+     <form enctype='multipart/form-data' action="upload_video" method="post" style='width:200px;background-color:#E7E7E7;padding:3px'>
          Title: <input type="text" name="title">
          Description: <input type="text" name="desc">
          Select a file: <input type="file" name="file">
-         <input type="submit" value="Submit" action="/">
+         <input type="submit" value="Upload Video" action="/">
      </form>
         <section class="experiment recordrtc">
-            <h2 class="header">
-                <select class="recording-media">
+                <select class="recording-media" style='background-color:#E7E7E7'>
                     <option value="record-video">Video</option>
                     <option value="record-audio">Audio</option>
                     <option value="record-screen">Screen</option>
                 </select>
                 
                 into
-                <select class="media-container-format">
+                <select class="media-container-format" style='background-color:#E7E7E7'>
                     <option>WebM</option>
                     <option disabled>Mp4</option>
                     <option disabled>WAV</option>
@@ -39,9 +38,8 @@
                 </select>
                 
                 <button>Start Recording</button>
-            </h2>
 
-            <div style="text-align: center; display: none;">
+            <div style="text-align: center; display: none;background-color:#E7E7E7">
                 <button id="save-to-disk">Save To Disk</button>
                 <button id="open-new-tab">Open New Tab</button>
             </div>
@@ -53,12 +51,10 @@
     <script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
     <script src="https://cdn.webrtc-experiment.com/gif-recorder.js"></script>
     <script src="https://cdn.webrtc-experiment.com/getScreenId.js"></script>
-
-    <!-- for Edige/FF/Chrome/Opera/etc. getUserMedia support -->
     <script src="https://cdn.webrtc-experiment.com/gumadapter.js"></script>
     <script src="/script.js"></script>
      {% for video in videos %}
-        <iframe width="420" height="315"
+        <iframe class="youtube-player" type="text/html"
           src="https://www.youtube.com/embed/{{ video['videoid'] }}?autoplay=0">
         </iframe>
      {% endfor %}     
