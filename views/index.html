@@ -60,7 +60,7 @@
 
     <h2>My Uploaded Videos</h2>
      {% for video in videos %}
-        <iframe class="youtube-player" type="text/html"
+        <iframe class="youtube-player" type="text/html" frameborder="0" allowfullscreen
           src="https://www.youtube.com/embed/{{ video['videoid'] }}?autoplay=0">
         </iframe>
      {% endfor %}     
