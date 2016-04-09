@@ -17,10 +17,8 @@
     "url": "https://github.com/jerryz1982/swe600-nodejs/issues"
   },
   "dependencies": {
-    "body-parser": "~1.15.0",
     "express": "~4.13.4",
     "express-session": "~1.13.0",
-    "googleapis": "~4.0.0",
     "mongoose": "^4.0.3",
     "multer": "^1.1.0",
     "passport": "~0.3.2",

@@ -1,19 +1,13 @@
 // dependencies
-var fs = require('fs');
 var express = require('express');
 var session = require('express-session');
-var path = require('path');
 var User = require('./user.js');
 var Video = require('./video.js');
 var mongoose = require('mongoose');
 var passport = require('passport');
-var GoogleStrategy = require('passport-google-oauth2').Strategy;
 var googleAuth = require('./authentication.js');
 var swig = require('swig');
 var youtube = require("youtube-api");
-var Google = require("googleapis");
-var GoogleYoutube = Google.youtube("v3");
-
 var multer  = require('multer')
 
 // connect to the database
@@ -26,19 +20,12 @@ var app = express();
 
 //app.configure(function() {
   app.set('views', __dirname + '/views');
-  //app.set('view engine', 'jade');
   app.engine('html', swig.renderFile);
   app.set('view engine', 'html');
-  //app.use(express.logger());
-  //app.use(express.cookieParser());
-  //app.use(express.bodyParser());
-  //app.use(express.methodOverride());
   app.use(new session({ secret: 'my_precious' }));
   app.use(passport.initialize());
   app.use(passport.session());
-  //app.use(app.router);
   app.use(express.static(__dirname + '/public'));
-  //app.use(busboy());
   app.use(multer().single('file'))
 //});
 
@@ -89,7 +76,7 @@ app.get('/', function(req, res){
       }
       }
       );
-var result = [];
+
 app.post('/upload_video', ensureAuthenticated, function(req, res){
     var oauth = youtube.authenticate({
     type: "oauth",
@@ -131,7 +118,7 @@ app.post('/upload_video', ensureAuthenticated, function(req, res){
                 googleID: req.user.googleID,
                 title: data['snippet']['title'],
                 description: data['snippet']['description'],
-                videoid: data['id']                
+                videoid: data['id'] 
             })
             newupload.save()
             res.redirect('/')
@@ -150,7 +137,7 @@ app.get('/auth/google',
   ] }
 ));
 app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/404.html' }),
+  passport.authenticate('google', { failureRedirect: '/' }),
   function(req, res) {
     res.redirect('/');
   }

@@ -1,7 +1,5 @@
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
-var Google = require("googleapis");
-var OAuth2 = Google.auth.OAuth2;
 var User = require('./user.js');
 var Video = require('./video.js');
 var youtube = require('youtube-api');
