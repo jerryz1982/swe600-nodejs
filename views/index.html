@@ -15,14 +15,7 @@
 	<td>{{ user.name }}</td>
      </tr>
      </table>
-     <form enctype='multipart/form-data' action="upload_video" method="post" style='width:100%;background-color:#E7E7E7;padding:3px'>
-         <br>Title:<input title='Pick a title' type="text" name="title">
-         <br>Description:
-         <br><textarea title='Something about the video' name="description" rows="3" cols="30"></textarea>
-         <br>Select a video:<input type="file" accept="video/*" name="file">
-         <input type="submit" value="Upload Video" action="/">
-     </form>
-     <p>Record a Video on Desktop</p>
+     <h2>Record a Video on Desktop</h2>
         <section class="experiment recordrtc">
                 <select class="recording-media" style='background-color:#E7E7E7'>
                     <option value="record-video">Video</option>
@@ -50,11 +43,22 @@
 
             <video controls muted></video>
         </section>
-    <script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
-    <script src="https://cdn.webrtc-experiment.com/gif-recorder.js"></script>
-    <script src="https://cdn.webrtc-experiment.com/getScreenId.js"></script>
-    <script src="https://cdn.webrtc-experiment.com/gumadapter.js"></script>
+    <script src="./RecordRTC.js"></script>
+    <script src="./gif-recorder.js"></script>
+    <script src="./getScreenId.js"></script>
+    <script src="./gumadapter.js"></script>
     <script src="/script.js"></script>
+
+     <h2>Upload a Video</h2>
+     <form enctype='multipart/form-data' action="upload_video" method="post" style='width:100%;background-color:#E7E7E7;padding:3px'>
+         <br>Title:<input title='Pick a title' type="text" name="title">
+         <br>Description:
+         <br><textarea title='Something about the video' name="description" rows="3" cols="30"></textarea>
+         <br>Select a video:<input type="file" accept="video/*" name="file">
+         <input type="submit" value="Upload Video" action="/">
+     </form>
+
+    <h2>My Uploaded Videos</h2>
      {% for video in videos %}
         <iframe class="youtube-player" type="text/html"
           src="https://www.youtube.com/embed/{{ video['videoid'] }}?autoplay=0">

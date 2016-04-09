@@ -32,7 +32,8 @@ passport.use(new GoogleStrategy({
             playlist=channel_data.items[0].contentDetails.relatedPlaylists.uploads
             youtube.playlistItems.list({
                 "playlistId": playlist,
-                "part": "snippet"
+                "part": "snippet",
+                "maxResults": 50
             }, function(err, playlist_data) {
                 if(err) {
                 console.log('playlist err ' + err )} else {
@@ -67,12 +68,14 @@ passport.use(new GoogleStrategy({
                           if (!err && video !==null) {
                               video.title = item.snippet.title
                               video.description = item.snippet.description
+                              video.publish_date = item.snippet.publishedAt
                               video.googleID = profile.id
                           } else {
                               video = new Video({
                                   googleID: profile.id,
                                   title: item.snippet.title,
                                   description: item.snippet.description,
+                                  publish_date: item.snippet.publishedAt,
                                   videoid: item.snippet.resourceId.videoId
                               })
                           }

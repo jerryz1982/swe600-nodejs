@@ -68,6 +68,8 @@ app.get('/', function(req, res){
            }
           else {
             Video.find({'googleID': user.googleID},
+              null,
+              {sort:{"publish_date":-1}},
               function(err, videos) {
                 if(err) {console.log(err)} else {
                 console.log('videos: ' + videos)
