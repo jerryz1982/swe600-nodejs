@@ -16,8 +16,9 @@
      </tr>
      </table>
      <form enctype='multipart/form-data' action="upload_video" method="post" style='width:100%;background-color:#E7E7E7;padding:3px'>
-         <br>Title:<input type="text" name="title">
-         <br>Description:<input type="text" name="desc">
+         <br>Title:<input title='Pick a title' type="text" name="title">
+         <br>Description:
+         <br><textarea title='Something about the video' name="description" rows="3" cols="30"></textarea>
          <br>Select a file:<input type="file" accept="video/*" name="file">
          <input type="submit" value="Upload Video" action="/">
      </form>
