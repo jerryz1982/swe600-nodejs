@@ -8,7 +8,8 @@ var twitterAuth = require('./authentication.js');
 var swig = require('swig');
 
 // connect to the database
-mongoose.connect('mongodb://swe600:swe600@ds019990.mlab.com:19990/twitter');
+mongoose.connect('mongodb://swe600:swe600@ds015770.mlab.com:15770/swe600_video');
+var conn2 = mongoose.createConnection('mongodb://swe600:swe600@ds019990.mlab.com:19990/twitter');
 
 var ReadJson = require("r-json")
 
@@ -49,7 +50,7 @@ app.get('/', function(req, res){
             res.render('404')
            }
           else {
-    mongoose.connection.db.collection('style', function (err, collection) {
+    conn2.db.collection('tag', function (err, collection) {
     if(err) {console.log('error finding table style ' + err)} else {
     collection.count({}, function(err, count) {
         if(err) {console.log('count error' + err)} else {
@@ -59,13 +60,15 @@ app.get('/', function(req, res){
     console.log('random number is ' + random_style_id )
     random_style = collection.findOne({id: random_style_id}, function(err, style) {
       if(err) {console.log('failed to find style')} else {
-        style_json = JSON.stringify(style)
-        console.log('random style color is ' + style_json)
+        var tag = JSON.stringify(style.tag)
+        console.log('random style color is ' + tag)
             //console.log(ctx)
+        var newtag = tag.replace("datahere", user.handle)
+        console.log('new random style color is ' + newtag)
             res.render('index', {
                 user: user,
                 req: req,
-                style: style
+                tag: newtag
             }); }
     })
     }})

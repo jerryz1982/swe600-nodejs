@@ -11,9 +11,19 @@
         <th>TwitterHandle</th>
      </tr>
      <tr>
-	<td>{{ user.name }}</td>
-        <td><span style="color: {{ style.color }};">@{{ user.handle }}</span></td>
+	<td id="one">{{ user.name }}</td>
+        <td id="two"></td>
      </tr>
      </table>
+        <script>
+        function getMetaContentByName(name,content){
+         var content = (content==null)?'content':content;
+           return document.querySelector("meta[name='"+name+"']").getAttribute(content);
+         }
+          var div = document.getElementById('two');
+          var tag = getMetaContentByName("tag");
+          div.innerHTML = div.innerHTML + tag;
+
+        </script>
 {% endif %}
 {% endblock %}
