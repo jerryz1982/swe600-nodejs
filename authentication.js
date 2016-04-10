@@ -2,7 +2,6 @@ var passport = require('passport');
 var TwitterStrategy = require('passport-twitter').Strategy;
 var User = require('./user.js');
 var Video = require('./video.js');
-var youtube = require('youtube-api');
 var ReadJson = require("r-json");
 const CREDENTIALS = ReadJson("./client_secret_twitter.json");
 
