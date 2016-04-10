@@ -2,19 +2,15 @@
 var express = require('express');
 var session = require('express-session');
 var User = require('./user.js');
-var Video = require('./video.js');
 var mongoose = require('mongoose');
 var passport = require('passport');
-var googleAuth = require('./authentication.js');
+var twitterAuth = require('./authentication.js');
 var swig = require('swig');
-var youtube = require("youtube-api");
-var multer  = require('multer')
 
 // connect to the database
-mongoose.connect('mongodb://swe600:swe600@ds015770.mlab.com:15770/swe600_video');
+mongoose.connect('mongodb://swe600:swe600@ds019990.mlab.com:19990/twitter');
 
 var ReadJson = require("r-json")
-const CREDENTIALS = ReadJson("./client_secret.json");
 
 var app = express();
 
@@ -26,7 +22,6 @@ var app = express();
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(express.static(__dirname + '/public'));
-  app.use(multer().single('file'))
 //});
 
 // serialize and deserialize
@@ -54,90 +49,44 @@ app.get('/', function(req, res){
             res.render('404')
            }
           else {
-            Video.find({'googleID': user.googleID},
-              null,
-              {sort:{"publish_date":-1}},
-              function(err, videos) {
-                if(err) {console.log(err)} else {
-                console.log('videos: ' + videos)
-                }
+    mongoose.connection.db.collection('style', function (err, collection) {
+    if(err) {console.log('error finding table style ' + err)} else {
+    collection.count({}, function(err, count) {
+        if(err) {console.log('count error' + err)} else {
+    style_count = count
+    console.log('collection size is ' + style_count)
+    random_style_id = Math.floor(Math.random() * style_count) + 1
+    console.log('random number is ' + random_style_id )
+    random_style = collection.findOne({id: random_style_id}, function(err, style) {
+      if(err) {console.log('failed to find style')} else {
+        style_json = JSON.stringify(style)
+        console.log('random style color is ' + style_json)
             //console.log(ctx)
             res.render('index', {
                 user: user,
                 req: req,
-                videos: videos
-            }); })
-      }});}
+                style: style
+            }); }
+    })
+    }})
+    }
+    })
+      }});
+      }
       else {
             res.render('index', {
                 user: {},
                 req: req
             });
       }
-      }
-      );
-
-app.post('/upload_video', ensureAuthenticated, function(req, res){
-    var oauth = youtube.authenticate({
-    type: "oauth",
-    client_id: CREDENTIALS.web.client_id,
-    client_secret: CREDENTIALS.web.client_secret,
-    redirect_url: CREDENTIALS.web.redirect_uris[0]
-    });
-    oauth.setCredentials({'access_token': req.user.accesstoken});
-    console.log(req.body)
-    console.log(req.file.originalname)
-
-    youtube.videos.insert({
-        resource: {
-            // Video title and description
-            snippet: {
-                title: req.body["title"],
-                description: req.body["desc"]
-                },
-            // I don't want to spam my subscribers
-            status: {
-                privacyStatus: "public"
-            }
-            },
-            // This is for the callback function
-        part: "snippet,status",
-
-            // Create the readable stream to upload the video
-        media: {
-            body: req.file.buffer
-        }
-    }, function (err, data) {
-        if(err) {
-            console.log('upload error');
-            console.log(err);
-            res.send('upload_error, please make sure you have a youtube channel. error detail: ' + err);
-        } else {
-            console.log(data)
-            newupload = new Video({
-                googleID: req.user.googleID,
-                title: data['snippet']['title'],
-                description: data['snippet']['description'],
-                videoid: data['id'] 
-            })
-            newupload.save()
-            res.redirect('/')
-            }
-        }
-     );
-
+      
 });
 
-app.get('/auth/google',
-  passport.authenticate('google', { scope: [
-    'https://www.googleapis.com/auth/plus.login',
-    'https://www.googleapis.com/auth/plus.profile.emails.read',
-    'https://www.googleapis.com/auth/youtube.upload',
-    'https://www.googleapis.com/auth/youtube'
-  ] }
-));
-app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/' }),
+app.get('/auth/twitter',
+  passport.authenticate('twitter'));
+
+app.get('/auth/twitter/callback',
+  passport.authenticate('twitter', { failureRedirect: '/' }),
   function(req, res) {
     res.redirect('/');
   }
